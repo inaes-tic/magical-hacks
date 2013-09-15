@@ -1,0 +1,8 @@
+#+TITLE: Magical Hacks repository
+
+here you'll find some pieces of code that we use but don't really know why.
+black magic.
+dragons.
+voodoo.
+
+here everything is ok.
