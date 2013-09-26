@@ -12,7 +12,7 @@ for b in `cat scenes.txt`; do
                 I=`printf "fixed-%06d.png" $i`;
                 J=`printf   "$sc-%06d.png" $j`;
 
-                cp $I $sc/$J;
+                ln -sf ../$I $sc/$J;
                 j=$(($j+1))
         done ;
         echo "$FFMPEG -r ntsc -i '$sc-%06d.png' -c:v prores_ks -profile:v 3 -qscale:v 1 -vendor ap10 -pix_fmt yuv422p10le -vcodec prores $sc.mov" > $sc/render.sh
