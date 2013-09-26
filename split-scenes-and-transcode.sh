@@ -15,7 +15,8 @@ for b in `cat scenes.txt`; do
                 ln -sf ../$I $sc/$J;
                 j=$(($j+1))
         done ;
-        echo "$FFMPEG -r ntsc -i '$sc-%06d.png' -c:v prores_ks -profile:v 3 -qscale:v 1 -vendor ap10 -pix_fmt yuv422p10le -vcodec prores $sc.mov" > $sc/render.sh
+        echo "$FFMPEG -r ntsc -i '$sc-%06d.png' -c:v prores_ks -profile:v 3 -qscale:v 1 -vendor ap10 -pix_fmt yuv422p10le -vcodec prores -r ntsc $sc.mov" > $sc/render.sh
+        echo $(cd $sc && sh ./render.sh)
         a=$(($b+1));
         s=$(($s+1));
 done
