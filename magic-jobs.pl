@@ -9,9 +9,9 @@ use Getopt::Long;
 use Data::Dumper;
 
 my $njob = Sys::CPU::cpu_count();
-my @jobs;
+my @cmds;
 
-print "will spawn: $njob jobs.\n";
+print "will spawn: $njob cmds.\n";
 
 my $dir = $ENV{'PWD'};
 my $recurse;
@@ -19,7 +19,8 @@ my $recurse;
 GetOptions (
     "dir|d=s"   => \$dir,
     "recurse|r" => \$recurse,
-    "job|j=s"   => sub { push @jobs, $_[1]},
+    "cmd|c=s"   => sub { push @cmds, $_[1]},
+    "jobs|j=i"  => \$njob,
     )
     or die("Error in command line arguments\n");
 
@@ -28,21 +29,21 @@ if ($recurse) {
         or die "$0: opendir: $!";
     my @dirs = grep {-d "$dir/$_" && ! /^\.{1,2}$/} readdir($dh);
 
-    my @rjobs;
+    my @rcmds;
     foreach my $d (@dirs) {
-        foreach (@jobs) {
-            push @rjobs, "cd $dir/$d && $_";
+        foreach (@cmds) {
+            push @rcmds, "cd $dir/$d && $_";
         }
     }
 
-    @jobs = @rjobs;
+    @cmds = @rcmds;
 }
 
-#die Dumper (\@jobs);
+#die Dumper (\@cmds);
 
 my $running :shared = 0;
 my $done :shared = 0;
-for my $cmd ( @jobs ) {
+for my $cmd ( @cmds ) {
     async{
         ++$running;
         system $cmd;
