@@ -1,9 +1,10 @@
-#! perl -slw
+#! perl -w
 use strict;
 use Time::HiRes qw[ sleep ];
 use threads;
 use threads::shared;
 use Sys::CPU; # libsys-cpu-perl
+use Getopt::Long;
 
 use Data::Dumper;
 
@@ -12,35 +13,32 @@ my @jobs;
 
 print "will spawn: $njob jobs.\n";
 
-my $root = $ENV{'PWD'};
-opendir my $dh, $root
-  or die "$0: opendir: $!";
-my @dirs = grep {-d "$root/$_" && ! /^\.{1,2}$/} readdir($dh);
+my $dir = $ENV{'PWD'};
+my $recurse;
 
-foreach (@dirs) {
-push @jobs, (
-qq[ cd $_ && ~/src/TV/CN23/magical-hacks/cv-flow.pl -l ../frames-resched.txt \
- 	-b '~/src/TV/CN23/biflow.pl' -x '~/src/TV/CN23/xaBuildFlow' \
- 	-i ~/src/TV/CN23/slowmoInterpolate \
- 	-m c -g 'scene*.png' -w -f "fixed-%06da.png"],
-qq[ cd $_ && ~/src/TV/CN23/magical-hacks/cv-flow.pl -l ../frames-resched.txt \
-        -b '~/src/TV/CN23/biflow.pl' -x '~/src/TV/CN23/xaBuildFlow' \
-        -i ~/src/TV/CN23/slowmoInterpolate \
-        -m b -g 'scene*.png' -w -f "fixed-%06db.png"],
-qq[ cd $_ && ~/src/TV/CN23/magical-hacks/cv-flow.pl -l ../frames-resched.txt \
-        -b '~/src/TV/CN23/biflow.pl' -x '~/src/TV/CN23/xaBuildFlow' \
-        -i ~/src/TV/CN23/slowmoInterpolate \
-        -a '0.5 3 200 3 5 1.3 256' \
-        -m b -g 'scene*.png' -w -f "fixed-%06dc.png"],
-qq[ cd $_ && ~/src/TV/CN23/magical-hacks/cv-flow.pl -l ../frames-resched.txt \
-        -b '~/src/TV/CN23/biflow.pl' -x '~/src/TV/CN23/xaBuildFlow' \
-        -i ~/src/TV/CN23/slowmoInterpolate \
-        -a '0.5 3 200 3 5 1.3 256' \
-        -m c -g 'scene*.png' -w -f "fixed-%06dd.png"]
-);
+GetOptions (
+    "dir|d=s"   => \$dir,
+    "recurse|r" => \$recurse,
+    "job|j=s"   => sub { push @jobs, $_[1]},
+    )
+    or die("Error in command line arguments\n");
+
+if ($recurse) {
+    opendir my $dh, $dir
+        or die "$0: opendir: $!";
+    my @dirs = grep {-d "$dir/$_" && ! /^\.{1,2}$/} readdir($dh);
+
+    my @rjobs;
+    foreach my $d (@dirs) {
+        foreach (@jobs) {
+            push @rjobs, "cd $dir/$d && $_";
+        }
+    }
+
+    @jobs = @rjobs;
 }
 
-die Dumper (\@jobs);
+#die Dumper (\@jobs);
 
 my $running :shared = 0;
 my $done :shared = 0;
