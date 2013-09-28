@@ -103,6 +103,7 @@ foreach (@imgs) {
             shift @frames;
         }
         if ($frames[0] > $N) {
+            print "WARNING got a big gap: ".($frames[0] - $N)." !\n" if ($frames[0] - 5 > $N);
             print "got frame-list, skipping frame $_ -> $img, next: '$frames[0]'\n";
         } elsif ($frames[0] == $N) {
             shift @frames;
