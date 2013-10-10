@@ -40,6 +40,7 @@ foreach (@ARGV) {
             $file = $dir.readlink($file);
         }
         ($frame) = $file =~ m/^$dir[^\d]+([\d]+)[^\d]+$/;
-        print --$frame, "\n";
+        $frame = int($frame) + 1; # Convert to Santiago's index (starting by 1)
+        print "$frame\n";
     }
 }
