@@ -4,7 +4,6 @@ use strict;
 use Getopt::Long qw(:config no_ignore_case);
 use Data::Dumper;
 
-my @cmds;
 
 my $basedir = $ENV{'PWD'};
 my $out=120;
