@@ -9,6 +9,7 @@ our $opt_out     = 120;
 our $opt_profile = 'dv_pal_wide';
 our $opt_melt    = 'melt';
 our $opt_input;
+our $opt_audio;
 
 my @inlogos;
 my @outlogos;
@@ -25,6 +26,7 @@ GetOptions (
     "melt|m=s",
     "profile|p=s",
     "input|i=s",
+    "audio|a=s",
     )
     or die("Error in command line arguments\n");
 
@@ -121,11 +123,13 @@ foreach (@outtitles) {
     $cmd .= mlt_do (\&add_title, $_);
 }
 
-$cmd .= "
+if ($opt_audio) {
+    $cmd .= "
     -track avformat:$opt_dir/audio2.mp3 \
         video_index=-1 \
         in=0 \
         out=$frames ";
+}
 
 $cmd .= "
     -consumer avformat:$opt_dir/out.mp4 \
