@@ -34,8 +34,8 @@ die "Need at least one input file (-i)" unless ($opt_input);
 
 @intitles  = ("MBC-Playout")                unless (@intitles);
 @outtitles = ("Join us at www.opcode.coop") unless (@outtitles);
-@inlogos   = ("logo_inaes.jpg:white", "mbc_playout.png", "logo_coop.png") unless (@inlogos);
-@outlogos  = ("logo_coop.png", "mbc_playout.png", "logo_inaes.jpg:white") unless (@outlogos);
+@inlogos   = ("logo_inaes.jpg:colour=white", "mbc_playout.png", "logo_coop.png") unless (@inlogos);
+@outlogos  = ("logo_coop.png", "mbc_playout.png", "logo_inaes.jpg:colour=white") unless (@outlogos);
 
 print Dumper(\@intitles, \@outtitles, \@inlogos, \@outlogos);
 
