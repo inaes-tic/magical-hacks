@@ -41,18 +41,30 @@ my ($frames) = `$opt_melt $opt_input -consumer xml` =~ m,name\s*=\s*"?length"?\s
 
 my $mix = "
     -mix 25 -mixer luma ";
+my $mixc = 0;
+
+sub mlt_do ($$) {
+    my $func = shift;
+
+    my ($ret, $out) = &$func (@_);
+    if ($mixc++ > 1) {
+        $ret .= $mix;
+    }
+    $frames += $out;
+    return $ret;
+}
 
 sub add_logo ($ ) {
     my ($logo, $colour) = m/(^[^:]+):?(.*)/ || die "need a logo";
 
     $colour = 'black' unless ($colour);
 
-    return "
+    return ("
     colour:$colour
             out=$out
             -attach watermark:$opt_dir/$logo
             composite.valign=c
-            composite.halign=c";
+            composite.halign=c", $out);
 }
 
 sub add_title ($ ) {
@@ -67,7 +79,7 @@ sub add_title ($ ) {
     my ($size)     = m/:size=([^:]+)/     || ('48');
     my ($weight)   = m/:weight=([^:]+)/   || ('500');
 
-    return "
+    return ("
     pango
         text=\"$text\"
         out=$out
@@ -77,7 +89,7 @@ sub add_title ($ ) {
         pad=$pad
         family=$family
         size=$size
-        weight=$weight "
+        weight=$weight ", $out);
 }
 
 my $cmd = $opt_melt;
@@ -86,13 +98,11 @@ $cmd .= "
     -profile $opt_profile ";
 
 foreach (@inlogos) {
-    $cmd .= add_logo ($_);
-    $cmd .= $mix;
+    $cmd .= mlt_do (\&add_logo, $_);
 }
 
 foreach (@intitles) {
-    $cmd .= add_title ($_);
-    $cmd .= $mix;
+    $cmd .= mlt_do (\&add_title, $_);
 }
 
 $cmd .= "
@@ -100,13 +110,11 @@ $cmd .= "
 $cmd .= $mix;
 
 foreach (@outlogos) {
-    $cmd .= add_logo ($_);
-    $cmd .= $mix;
+    $cmd .= mlt_do (\&add_logo, $_);
 }
 
 foreach (@outtitles) {
-    $cmd .= add_title ($_);
-    $cmd .= $mix;
+    $cmd .= mlt_do (\&add_title, $_);
 }
 
 $cmd .= "
