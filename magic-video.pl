@@ -37,6 +37,8 @@ GetOptions (
 
 print Dumper(\@intitles, \@outtitles, \@inlogos, \@outlogos);
 
+my ($frames) = `$opt_melt $opt_input -consumer xml` =~ m,name\s*=\s*"?length"?\s*>\s*(\d+)\s*<, or die "Couldn't parse XML: $opt_input";
+
 my $mix = "
     -mix 25 -mixer luma ";
 
@@ -111,7 +113,7 @@ $cmd .= "
     -track avformat:$opt_dir/audio2.mp3 \
         video_index=-1 \
         in=0 \
-        out=3453 ";
+        out=$frames ";
 
 $cmd .= "
     -consumer avformat:$opt_dir/out.mp4 \
