@@ -104,11 +104,11 @@ $cmd .= "
     -profile $opt_profile ";
 
 foreach (@inlogos) {
-    $cmd .= mlt_do (\&add_logo, $_);
+    m/\S/ and $cmd .= mlt_do (\&add_logo, $_);
 }
 
 foreach (@intitles) {
-    $cmd .= mlt_do (\&add_title, $_);
+    m/\S/ and $cmd .= mlt_do (\&add_title, $_);
 }
 
 $cmd .= "
@@ -116,11 +116,11 @@ $cmd .= "
 $cmd .= $mix;
 
 foreach (@outlogos) {
-    $cmd .= mlt_do (\&add_logo, $_);
+    m/\S/ and $cmd .= mlt_do (\&add_logo, $_);
 }
 
 foreach (@outtitles) {
-    $cmd .= mlt_do (\&add_title, $_);
+    m/\S/ and $cmd .= mlt_do (\&add_title, $_);
 }
 
 if ($opt_audio) {
