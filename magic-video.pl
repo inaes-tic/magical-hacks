@@ -55,7 +55,11 @@ sub mlt_do ($$) {
 }
 
 sub add_logo ($ ) {
-    my ($logo, $colour) = m/(^[^:]+):?(.*)/ || die "need a logo";
+
+    my ($logo) = m/^([^:]+)/ or die "need logo";
+
+    my ($out)    = m/:out=([^:]+)/    || ($opt_out);
+    my ($colour) = m/:colour=([^:]+)/ || ('black');
 
     $colour = 'black' unless ($colour);
 
