@@ -72,9 +72,9 @@ sub add_logo ($ ) {
 }
 
 sub add_title ($ ) {
-    my ($text) = m/^([^:]+)/;
-    die "need text" unless ($text);
+    my ($text) = m/^([^:]+)/ or die "need text";
 
+    my ($out)    = m/:out=([^:]+)/    || ($opt_out);
     my ($fgcolour) = m/:fgcolour=([^:]+)/ || ('white');
     my ($bgcolour) = m/:bgcolour=([^:]+)/ || ('black');
     my ($align)    = m/:align=([^:]+)/    || ('center');
