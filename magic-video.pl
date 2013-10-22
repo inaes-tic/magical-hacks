@@ -8,8 +8,8 @@ our $opt_dir     = $ENV{'PWD'};
 our $opt_out     = 120;
 our $opt_profile = 'dv_pal_wide';
 our $opt_melt    = 'melt';
-our $opt_input   = 'demo.mpg';
 our $opt_ffmpeg  = 'ffmpeg';
+our $opt_input;
 
 my @inlogos;
 my @outlogos;
@@ -29,6 +29,8 @@ GetOptions (
     "input|i=s",
     )
     or die("Error in command line arguments\n");
+
+die "Need at least one input file (-i)" unless ($opt_input);
 
 @intitles  = ("MBC-Playout")                unless (@intitles);
 @outtitles = ("Join us at www.opcode.coop") unless (@outtitles);
