@@ -4,26 +4,29 @@ use strict;
 use Getopt::Long qw(:config no_ignore_case);
 use Data::Dumper;
 
+our $opt_dir     = $ENV{'PWD'};
+our $opt_out     = 120;
+our $opt_profile = 'dv_pal_wide';
+our $opt_melt    = 'melt';
+our $opt_input   = 'demo.mpg';
+our $opt_ffmpeg  = 'ffmpeg';
 
-my $basedir = $ENV{'PWD'};
-my $out=120;
 my @inlogos;
 my @outlogos;
 my @intitles;
 my @outtitles;
-my $profile = 'dv_pal_wide';
-my $cmd = 'melt';
-my $video = 'demo.mpg';
 
 GetOptions (
-    "dir|d=s"     => \$basedir,
-    "out|o=i"     => \$out,
-    "intitle|t=s" => sub { push @intitles, $_[1]},
+    "dir|d=s",
+    "out|o=i",
+    "intitle|t=s" => sub { push @intitles,  $_[1]},
     "outtitle|T=s"=> sub { push @outtitles, $_[1]},
-    "inlogo|l=s"  => sub { push @inlogos, $_[1]},
-    "outlogo|L=s" => sub { push @outlogos, $_[1]},
-    "melt|m=s"    => \$cmd,
-    "profile|p=s" => \$profile,
+    "inlogo|l=s"  => sub { push @inlogos,   $_[1]},
+    "outlogo|L=s" => sub { push @outlogos,  $_[1]},
+    "melt|m=s",
+    "profile|p=s",
+    "ffmpeg|f=s",
+    "input|i=s",
     )
     or die("Error in command line arguments\n");
 
@@ -45,7 +48,7 @@ sub add_logo ($ ) {
     return "
     colour:$colour
             out=$out
-            -attach watermark:$basedir$logo
+            -attach watermark:$opt_dir/$logo
             composite.valign=c
             composite.halign=c";
 }
@@ -75,8 +78,10 @@ sub add_title ($ ) {
         weight=$weight "
 }
 
+my $cmd = $opt_melt;
+
 $cmd .= "
-    -profile $profile ";
+    -profile $opt_profile ";
 
 foreach (@inlogos) {
     $cmd .= add_logo ($_);
@@ -89,7 +94,7 @@ foreach (@intitles) {
 }
 
 $cmd .= "
-    $video";
+    $opt_input";
 $cmd .= $mix;
 
 foreach (@outlogos) {
@@ -103,13 +108,13 @@ foreach (@outtitles) {
 }
 
 $cmd .= "
-    -track avformat:$basedir/audio2.mp3 \
+    -track avformat:$opt_dir/audio2.mp3 \
         video_index=-1 \
         in=0 \
         out=3453 ";
 
 $cmd .= "
-    -consumer avformat:$basedir/out.mp4 \
+    -consumer avformat:$opt_dir/out.mp4 \
         acodec=aac \
         vcodec=libx264";
 
