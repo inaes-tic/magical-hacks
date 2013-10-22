@@ -8,7 +8,6 @@ our $opt_dir     = $ENV{'PWD'};
 our $opt_out     = 120;
 our $opt_profile = 'dv_pal_wide';
 our $opt_melt    = 'melt';
-our $opt_ffmpeg  = 'ffmpeg';
 our $opt_input;
 
 my @inlogos;
@@ -25,7 +24,6 @@ GetOptions (
     "outlogo|L=s" => sub { push @outlogos,  $_[1]},
     "melt|m=s",
     "profile|p=s",
-    "ffmpeg|f=s",
     "input|i=s",
     )
     or die("Error in command line arguments\n");
