@@ -31,6 +31,7 @@ GetOptions (
     or die("Error in command line arguments\n");
 
 die "Need at least one input file (-i)" unless ($opt_input);
+my $output = shift || die "No output file given";
 
 @intitles  = ("MBC-Playout")                unless (@intitles);
 @outtitles = ("Join us at www.opcode.coop") unless (@outtitles);
@@ -132,7 +133,7 @@ if ($opt_audio) {
 }
 
 $cmd .= "
-    -consumer avformat:$opt_dir/out.mp4 \
+    -consumer avformat:$opt_dir/$output \
         acodec=aac \
         vcodec=libx264";
 
