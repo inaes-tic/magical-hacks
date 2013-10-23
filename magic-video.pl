@@ -19,14 +19,14 @@ my @outtitles;
 GetOptions (
     "dir|d=s",
     "out|o=i",
-    "intitle|t=s" => sub { push @intitles,  $_[1]},
-    "outtitle|T=s"=> sub { push @outtitles, $_[1]},
-    "inlogo|l=s"  => sub { push @inlogos,   $_[1]},
-    "outlogo|L=s" => sub { push @outlogos,  $_[1]},
     "melt|m=s",
     "profile|p=s",
     "input|i=s",
     "audio|a=s",
+    "intitle|t=s" => sub { push @intitles,  $_[1]},
+    "outtitle|T=s"=> sub { push @outtitles, $_[1]},
+    "inlogo|l=s"  => sub { push @inlogos,   $_[1]},
+    "outlogo|L=s" => sub { push @outlogos,  $_[1]},
     )
     or die("Error in command line arguments\n");
 
