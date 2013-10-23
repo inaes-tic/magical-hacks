@@ -57,46 +57,53 @@ sub mlt_do ($$) {
     return $ret;
 }
 
+sub parse_opts ($% ) {
+    my $arg  = shift;
+    my $args = shift;
+
+    return map { $arg =~ m/:$_=([^:]+)/ ?($_ => $1):($_ => $$args{$_})} keys (%$args);
+}
+
 sub add_logo ($ ) {
 
     my ($logo) = m/^([^:]+)/ or die "need logo";
 
-    my ($out)    = m/:out=([^:]+)/    || ($opt_out);
-    my ($colour) = m/:colour=([^:]+)/ || ('black');
-
-    $colour = 'black' unless ($colour);
+    my %args = parse_opts ($_,
+                           {'out'    => $opt_out,
+                            'colour' => 'black'});
 
     return ("
-    colour:$colour
-            out=$out
+    colour:$args{colour}
+            out=$args{out}
             -attach watermark:$opt_dir/$logo
             composite.valign=c
-            composite.halign=c", $out);
+            composite.halign=c", $args{'out'});
 }
 
 sub add_title ($ ) {
     my ($text) = m/^([^:]+)/ or die "need text";
 
-    my ($out)    = m/:out=([^:]+)/    || ($opt_out);
-    my ($fgcolour) = m/:fgcolour=([^:]+)/ || ('white');
-    my ($bgcolour) = m/:bgcolour=([^:]+)/ || ('black');
-    my ($align)    = m/:align=([^:]+)/    || ('center');
-    my ($pad)      = m/:pad=([^:]+)/      || ('100');
-    my ($family)   = m/:family=([^:]+)/   || ('Courier');
-    my ($size)     = m/:size=([^:]+)/     || ('48');
-    my ($weight)   = m/:weight=([^:]+)/   || ('500');
+    my %args = parse_opts ($_,
+                           {'out'      => $opt_out,
+                            'fgcolour' => 'white',
+                            'bgcolour' => 'black',
+                            'align'    => 'center',
+                            'pad'      => '100',
+                            'family'   => 'Courier',
+                            'size'     => '48',
+                            'weight'   => '500'});
 
     return ("
     pango
         text=\"$text\"
-        out=$out
-        fgcolour=$fgcolour
-        bgcolour=$bgcolour
-        align=$align
-        pad=$pad
-        family=$family
-        size=$size
-        weight=$weight ", $out);
+        out=$args{out}
+        fgcolour=$args{fgcolour}
+        bgcolour=$args{bgcolour}
+        align=$args{align}
+        pad=$args{pad}
+        family=$args{family}
+        size=$args{size}
+        weight=$args{weight} ", $args{'out'});
 }
 
 my $cmd = $opt_melt;
