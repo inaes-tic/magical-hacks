@@ -112,7 +112,7 @@ $cmd .= "
     -profile $opt_profile ";
 
 foreach (@inlogos) {
-    m/\S/ and $cmd .= mlt_do (\&add_logo, $_);
+    m/\S/ and $cmd .= mlt_do (\&add_logo,  $_);
 }
 
 foreach (@intitles) {
@@ -124,7 +124,7 @@ $cmd .= "
 $cmd .= $mix;
 
 foreach (@outlogos) {
-    m/\S/ and $cmd .= mlt_do (\&add_logo, $_);
+    m/\S/ and $cmd .= mlt_do (\&add_logo,  $_);
 }
 
 foreach (@outtitles) {
