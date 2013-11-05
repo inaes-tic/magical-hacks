@@ -8,10 +8,11 @@ my $files_dir = 'magic-video-files/';
 
 our $opt_dir     = $ENV{'PWD'};
 our $opt_out     = 120;
-our $opt_profile = 'dv_pal_wide';
+our $opt_profile = 'atsc_1080p_25'; # atsc_720p_25
 our $opt_melt    = 'melt';
 our $opt_input;
-our $opt_audio   = $files_dir . 'audio.mp3';
+our $opt_audio   = $opt_dir . '/' . $files_dir . 'audio.mp3';
+our $opt_frames;
 
 my @inlogos;
 my @outlogos;
@@ -25,6 +26,7 @@ GetOptions (
     "profile|p=s",
     "input|i=s",
     "audio|a=s",
+    "frames|f=i",
     "intitle|t=s" => sub { push @intitles,  $_[1]},
     "outtitle|T=s"=> sub { push @outtitles, $_[1]},
     "inlogo|l=s"  => sub { push @inlogos,   $_[1]},
@@ -33,7 +35,7 @@ GetOptions (
     or die("Error in command line arguments\n");
 
 die "Need at least one input file (-i)" unless ($opt_input);
-my $output = shift || die "No output file given";
+my $output = shift;
 
 @intitles  = ("MBC-Playout")                unless (@intitles);
 @outtitles = ("Join us at www.opcode.coop") unless (@outtitles);
@@ -50,8 +52,6 @@ my $output = shift || die "No output file given";
 
 print Dumper(\@intitles, \@outtitles, \@inlogos, \@outlogos);
 
-my ($frames) = `$opt_melt $opt_input -consumer xml` =~ m,name\s*=\s*"?length"?\s*>\s*(\d+)\s*<, or die "Couldn't parse XML: $opt_input";
-
 my $mix = "
     -mix 25 -mixer luma ";
 my $mixc = 0;
@@ -63,7 +63,6 @@ sub mlt_do ($$) {
     if ($mixc++) {
         $ret .= $mix;
     }
-    $frames += $out;
     return $ret;
 }
 
@@ -133,26 +132,28 @@ $cmd .= "
     $opt_input";
 $cmd .= $mix;
 
-foreach (@outlogos) {
-    m/\S/ and $cmd .= mlt_do (\&add_logo,  $_);
-}
-
 foreach (@outtitles) {
     m/\S/ and $cmd .= mlt_do (\&add_title, $_);
 }
 
-if ($opt_audio) {
-    $cmd .= "
-    -track avformat:$opt_dir/$opt_audio \
-        video_index=-1 \
-        in=0 \
-        out=$frames ";
+foreach (@outlogos) {
+    m/\S/ and $cmd .= mlt_do (\&add_logo,  $_);
 }
 
-$cmd .= "
-    -consumer avformat:$opt_dir/$output \
+if ($opt_audio and $opt_frames) {
+    $cmd .= "
+    -track avformat:$opt_audio \
+        video_index=-1 \
+        in=0 \
+        out=$opt_frames ";
+}
+
+if ($output) {
+    $cmd .= "
+    -consumer avformat:$output \
         acodec=aac \
         vcodec=libx264";
+}
 
 print "==> '$cmd'\n";
 

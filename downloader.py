@@ -106,7 +106,7 @@ try:
                     log("Done.")
 
             except IOError, e:
-                log(e.strerror, stream='stderr')
+                log(e.strerror)
             else:
                 if _['md5'] and _['md5'] == get_md5(out):
                     log("MD5 OK.", begin=SEP)
