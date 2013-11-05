@@ -1,0 +1,25 @@
+{
+    "basedir": "magic-video-files",
+    "files": [
+        {
+            "url": "https://raw.github.com/inaes-tic/design-artwork/master/video/logo_inaes.png",
+            "out": "logo_inaes.png",
+            "md5": "c8d82004aa9519626e49ced0d14867ba"
+        },
+        {
+            "url": "https://raw.github.com/inaes-tic/design-artwork/master/video/logo_opcode.png",
+            "out": "logo_opcode.png",
+            "md5": "41cd5b9fa0fff4f50b1fe9a8d060d852"
+        },
+        {
+            "url": "https://raw.github.com/inaes-tic/design-artwork/master/video/logo_mbc_playout.png",
+            "out": "logo_mbc_playout.png",
+            "md5": "1bd62daab6d8412bdb98b293959a6e02"
+        },
+        {
+            "url": "http://storage-new.newjamendo.com/download/track/699576/mp32/",
+            "out": "audio.mp3",
+            "md5": "46da8658a0abb2c845facb7119d57d66"
+        }
+    ]
+}

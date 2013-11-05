@@ -4,12 +4,14 @@ use strict;
 use Getopt::Long qw(:config no_ignore_case);
 use Data::Dumper;
 
+my $files_dir = 'magic-video-files/';
+
 our $opt_dir     = $ENV{'PWD'};
 our $opt_out     = 120;
 our $opt_profile = 'dv_pal_wide';
 our $opt_melt    = 'melt';
 our $opt_input;
-our $opt_audio;
+our $opt_audio   = $files_dir . 'audio.mp3';
 
 my @inlogos;
 my @outlogos;
@@ -35,8 +37,16 @@ my $output = shift || die "No output file given";
 
 @intitles  = ("MBC-Playout")                unless (@intitles);
 @outtitles = ("Join us at www.opcode.coop") unless (@outtitles);
-@inlogos   = ("logo_inaes.jpg:colour=white", "mbc_playout.png", "logo_coop.png") unless (@inlogos);
-@outlogos  = ("logo_coop.png", "mbc_playout.png", "logo_inaes.jpg:colour=white") unless (@outlogos);
+@inlogos   = (
+    $files_dir . "logo_inaes.png:colour=white",
+    $files_dir . "logo_mbc_playout.png",
+    $files_dir . "logo_opcode.png"
+    ) unless (@inlogos);
+@outlogos  = (
+    $files_dir . "logo_opcode.png",
+    $files_dir . "logo_mbc_playout.png",
+    $files_dir . "logo_inaes.png:colour=white"
+    ) unless (@outlogos);
 
 print Dumper(\@intitles, \@outtitles, \@inlogos, \@outlogos);
 
@@ -50,7 +60,7 @@ sub mlt_do ($$) {
     my $func = shift;
 
     my ($ret, $out) = &$func (@_);
-    if ($mixc++ > 1) {
+    if ($mixc++) {
         $ret .= $mix;
     }
     $frames += $out;
@@ -133,7 +143,7 @@ foreach (@outtitles) {
 
 if ($opt_audio) {
     $cmd .= "
-    -track avformat:$opt_dir/audio2.mp3 \
+    -track avformat:$opt_dir/$opt_audio \
         video_index=-1 \
         in=0 \
         out=$frames ";
